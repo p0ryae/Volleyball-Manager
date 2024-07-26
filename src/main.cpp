@@ -9,7 +9,7 @@
 
 int main(void)
 {
-    GLFWwindow* window;
+    GLFWwindow *window;
 
     if (!glfwInit())
         return -1;
@@ -19,7 +19,7 @@ int main(void)
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     window = glfwCreateWindow(1400, 800, "Volleyball Manager", NULL, NULL);
-    if (!window) 
+    if (!window)
     {
         std::cout << "Failed to create window." << std::endl;
         glfwTerminate();
@@ -28,7 +28,7 @@ int main(void)
 
     glfwMakeContextCurrent(window);
 
-    if (!gladLoadGL()) 
+    if (!gladLoadGL())
     {
         std::cout << "Failed to load pointer." << std::endl;
         glfwTerminate();
@@ -39,10 +39,9 @@ int main(void)
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO();
+    ImGuiIO &io = ImGui::GetIO();
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-    io.Fonts->AddFontFromFileTTF("src/assets/fonts/SpaceMono-Regular.ttf", 20);
-    io.Fonts->AddFontFromFileTTF("src/assets/fonts/SpaceMono-Bold.ttf", 20);
+    io.Fonts->AddFontFromFileTTF("src/assets/fonts/Montserrat-Regular.ttf", 18);
     ImGui::StyleColorsDark();
     darkTheme();
 
@@ -50,6 +49,9 @@ int main(void)
     ImGui_ImplOpenGL3_Init("#version 330");
 
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+
+    static bool show_career = false;
+    static bool show_settings = false;
 
     while (!glfwWindowShouldClose(window))
     {
@@ -59,7 +61,7 @@ int main(void)
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        ImGuiViewport* viewport = ImGui::GetMainViewport();
+        ImGuiViewport *viewport = ImGui::GetMainViewport();
         ImGui::SetNextWindowPos(viewport->Pos);
         ImGui::SetNextWindowSize(viewport->Size);
         ImGui::SetNextWindowViewport(viewport->ID);
@@ -73,36 +75,35 @@ int main(void)
         ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_PassthruCentralNode | ImGuiDockNodeFlags_NoResize | ImGuiDockNodeFlags_AutoHideTabBar);
         ImGui::End();
 
-        ImGui::Begin("Volleyball Manager", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
-        
-        ImGui::PushFont(io.Fonts->Fonts[1]);
-        ImVec2 window_size = ImGui::GetWindowSize();
-        ImVec2 button_size = ImVec2(200.0f, 80.0f);
-        ImVec2 button_pos = ImVec2((window_size.x - button_size.x) * 0.5f, (window_size.y - (2 * button_size.y) + 10.0f) * 0.5f);
-        ImGui::SetCursorPos(button_pos);
-        if (ImGui::Button("Start New Career", button_size))
+        ImGui::Begin("Volleyball Manager", nullptr);
+
+        // Check if the "Start New Career" button is clicked
+        if (ImGui::Button("Start New Career", ImVec2(200.0f, 80.0f)))
+            show_career = true;
+
+        if (show_career)
         {
-            std::cout << "Soon..." << std::endl;
+            ImGui::Begin("New Career", &show_career);
+            ImGui::Text("balls");
+            ImGui::End();
         }
 
-        button_pos = ImVec2(button_pos.x, button_pos.y + button_size.y + 10.0f);
-        ImGui::SetCursorPos(button_pos);
         if (ImGui::Button("Settings", ImVec2(200.0f, 80.0f)))
+            show_settings = true;
+
+        if (show_settings)
         {
-            std::cout << "Soon..." << std::endl;
+            ImGui::Begin("Settings", &show_settings);
+            ImGui::Text("balls");
+            ImGui::End();
         }
 
-        button_pos = ImVec2(button_pos.x, button_pos.y + button_size.y + 10.0f);
-        ImGui::SetCursorPos(button_pos);
         if (ImGui::Button("Quit", ImVec2(200.0f, 80.0f)))
         {
             return -1;
         }
-        ImGui::PopFont();
 
         ImGui::End();
-
-        /* ImGui::ShowDemoWindow(); */
 
         ImGui::Render();
         glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
